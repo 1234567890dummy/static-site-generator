@@ -15,7 +15,7 @@ def split_nodes_delimiter(
         split_old_node = old_node.text.split(delimiter)
         for index in range(len(split_old_node)):
             if len(split_old_node) % 2 == 0:
-                raise Exception("missing closing delimiter {delimiter}")
+                raise Exception(f"missing closing delimiter {delimiter}")
             if index % 2 == 0:
                 new_nodes.append(TextNode(split_old_node[i], TextType.TEXT))
             else:
