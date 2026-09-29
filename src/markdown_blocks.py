@@ -12,24 +12,25 @@ class BlockType(Enum):
 
 
 def markdown_to_blocks(markdown):
-    split_markdown = markdown.split('\n\n')
-    split_markdown.strip()
-    for index, val in enumerate(split_markdown):
-        if not val:
-            split_markdown.pop(index)
+    blocks = markdown.split('\n\n')
 
-    return split_markdown
+    block_list = []
+    for block in blocks:
+        if block.strip():
+            block_list.append(block.strip())
+
+    return block_list
 
 
 def block_to_block_type(markdown_block):
-    if re.search("/^#{1,6} ./", markdown_block):
+    if re.search("^#{1,6} ", markdown_block):
         return BlockType.HEADING
-    if re.search("/^`{3}\n`{3}$/", markdown_block):
+    if markdown_block.startswith("```") and markdown_block.endswith("```"):
         return BlockType.CODE
-    if re.search("/^> ?/", markdown_block):
+    if re.search("^> ?", markdown_block):
         return BlockType.QUOTE
-    if re.search("/^- /", markdown_block):
+    if re.search("^- ", markdown_block):
         return BlockType.UNORDERED_LIST
-    if re.search("/^\d\. /", markdown_block):
+    if re.search(r"^\d{1,}\. ", markdown_block):
         return BlockType.ORDERED_LIST
     return BlockType.PARAGRAPH

@@ -27,10 +27,21 @@ def block_to_html_node(block):
         return ParentNode(tag=f"h{hashes}", children=text_to_children(block[hashes+1:].replace('\n',' ')))
 
     if block_type == BlockType.PARAGRAPH:
-        return ParentNode(tag="p", children=text_to_children(block.replace('\n',' ')))
+        split_block = block.splitlines()
+        fixed_block = []
+        for line in split_block:
+            fixed_block.append(line.lstrip())
+        fixed_block = ' '.join(fixed_block)
+        return ParentNode(tag="p", children=text_to_children(fixed_block))
 
     if block_type == BlockType.CODE:
-        inner = TextNode(text=block[4:-3], text_type=TextType.CODE)
+        split_block = block[4:-3].splitlines()
+        fixed_block = []
+        for line in split_block:
+            fixed_block.append(line.lstrip())
+
+        fixed_block = '\n'.join(fixed_block)
+        inner = TextNode(text=fixed_block, text_type=TextType.CODE)
         inner = text_node_to_html_node(inner)
         return ParentNode(tag="pre", children=[inner])
 
