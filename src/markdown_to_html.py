@@ -49,7 +49,7 @@ def block_to_html_node(block):
         block_lines = block.splitlines()
         prepared_lines = []
         for block_line in block_lines:
-            if block_line[1] == " ":
+            if block_line.startswith("> "):
                 prepared_lines.append(block_line[2:])
             else:
                 prepared_lines.append(block_line[1:])
