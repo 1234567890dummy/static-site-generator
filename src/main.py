@@ -6,27 +6,27 @@ from generate_page import generate_page_recursive
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 STATIC_DIR = PROJECT_ROOT / "static"
-PUBLIC_DIR = PROJECT_ROOT / "public"
+DOCS_DIR = PROJECT_ROOT / "docs"
 
 def main():
-    if not argv[0]:
-        basepath = "/"
+    if len(argv) > 1:
+        basepath = argv[1]
     else:
-        basepath = argv[0]
+        basepath = "/"
 
     public_flush()
-    static_to_public(STATIC_DIR, PUBLIC_DIR)
+    static_to_public(STATIC_DIR, DOCS_DIR)
     generate_page_recursive(
         PROJECT_ROOT / "content",
         PROJECT_ROOT / "template.html",
-        PUBLIC_DIR,
+        DOCS_DIR,
         basepath
     )
 
 def public_flush():
-    if PUBLIC_DIR.exists():
-        shutil.rmtree(PUBLIC_DIR)
-    PUBLIC_DIR.mkdir()
+    if DOCS_DIR.exists():
+        shutil.rmtree(DOCS_DIR)
+    DOCS_DIR.mkdir()
 
 def static_to_public(src, dst):
     for item in src.iterdir():
