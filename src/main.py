@@ -1,5 +1,6 @@
 import shutil
 from pathlib import Path
+from sys import argv
 
 from generate_page import generate_page_recursive
 
@@ -8,12 +9,18 @@ STATIC_DIR = PROJECT_ROOT / "static"
 PUBLIC_DIR = PROJECT_ROOT / "public"
 
 def main():
+    if not argv[0]:
+        basepath = "/"
+    else:
+        basepath = argv[0]
+
     public_flush()
     static_to_public(STATIC_DIR, PUBLIC_DIR)
     generate_page_recursive(
         PROJECT_ROOT / "content",
         PROJECT_ROOT / "template.html",
         PUBLIC_DIR,
+        basepath
     )
 
 def public_flush():

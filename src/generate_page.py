@@ -1,5 +1,4 @@
 import re
-import os
 from pathlib import Path
 
 from markdown_to_html import markdown_to_html_node
@@ -11,7 +10,7 @@ def extract_title(markdown):
         raise Exception("ERROR: NO H1 HEADER FOUND")
     return title.group(1).strip()
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
 
     with open(from_path, "r") as file:
@@ -24,17 +23,20 @@ def generate_page(from_path, template_path, dest_path):
     new_html = template_path_file.replace("{{ Title }}", from_path_title)
     new_html = new_html.replace("{{ Content }}", from_path_html_node.to_html())
 
-    dest_path_dirs = os.path.dirname(dest_path)
-    os.makedirs(dest_path_dirs, exist_ok=True)
+    # replace any instances of href="/ and src="/ with href="/{basepath} and src="/{basepath}
+    new_html = new_html.replace('href="/', f'href="{basepath}')
+    new_html = new_html.replace('src="/', f'src="{basepath}')
+
+    Path(dest_path).parent.mkdir(parents=True, exist_ok=True)
 
     with open(dest_path, "w") as file:
         file.write(new_html)
 
-def generate_page_recursive(dir_path_content, template_path, dest_dir_path):
+def generate_page_recursive(dir_path_content, template_path, dest_dir_path, basepath):
     for item in dir_path_content.iterdir():
         target = dest_dir_path / item.name
         if item.is_file():
             if item.suffix == ".md":
-                generate_page(item, template_path, target.with_suffix(".html"))
+                generate_page(item, template_path, target.with_suffix(".html"), basepath)
         else:
-            generate_page_recursive(item, template_path, target)
+            generate_page_recursive(item, template_path, target, basepath)
